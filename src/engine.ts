@@ -24,7 +24,7 @@ export class Engine {
   start(): void {
     let player = this._manager.addEntity("Palyer");
     //console.log(player);
-    player.addComponent(TransformComponent, [200, 200], 2, 32, 32, 3);
+    player.addComponent(TransformComponent, [200, 200], 2, 32, 32, 1);
     player.addComponent(SpriteComponent, "./dist/assets/player.png", 32, 32);
     console.log("managers entities : " + Object.values(this._manager.entities));
     this.loop(this._startTime);

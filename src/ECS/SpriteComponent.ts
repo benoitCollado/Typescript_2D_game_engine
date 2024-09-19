@@ -45,8 +45,7 @@ export class SpriteComponent extends ECS.Component{
   public draw(){
     ctx.imageSmoothingEnabled = false;
     ctx.scale(1,1);
-    ctx.drawImage(this._texture, this._dest_rect.x, this._dest_rect.y, this._dest_rect.w, this._dest_rect.h); 
-    console.log("dans le draw du composant sprite de l'entité : " + this.entity.name);
+    ctx.drawImage(this._texture, this._dest_rect.x, this._dest_rect.y, this._dest_rect.w, this._dest_rect.h);
   }
   
 }

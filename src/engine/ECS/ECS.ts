@@ -15,16 +15,20 @@ export abstract class Component {
 }
 
 export class Entity {
-  private active: boolean;
-  private components: { [name: string]: Component } = {};
+  protected active: boolean;
+  protected components: { [name: string]: Component } = {};
   public name: string;
 
-  private manager: Manager;
+  protected manager: Manager;
 
   constructor(manager: Manager, name: string) {
     this.active = true;
     this.manager = manager;
     this.name = name;
+  }
+
+  public init(){
+    
   }
 
   public update(): void {
@@ -40,7 +44,7 @@ export class Entity {
   public addComponent<T extends Component>(
     type: Iconstructor<T>,
     ...args: any
-  ): void {
+  ): T {
     const component = new type(this, ...args);
     if (this.components[component._className] !== undefined) {
       console.log(
@@ -49,6 +53,7 @@ export class Entity {
     } else {
       this.components[component._className] = component;
     }
+    return component;
   }
 
   public hasComponent(componentName: string): boolean {
@@ -82,15 +87,18 @@ export class Manager {
     });
   }
 
-  public addEntity(name: string): Entity {
-    const entity = new Entity(this, name);
+  public addEntity(entity: Entity):void{
+    /*const entity = new Entity(this, name);*/
     console.log("addentity : ");
     console.log(entity);
-    if (this.entities[name] !== undefined) {
-      throw new Error("Entity with this name alreade exist");
+    if (this.entities[entity.name] !== undefined) {
+      //throw new Error("Entity with this name alreade exist");
+      console.log("Entity with this name alreade exist");
     } else {
-      this.entities[name] = entity;
+      this.entities[entity.name] = entity;
     }
-    return entity;
+    //return entity;
   }
 }
+
+export const MANAGER = new Manager();

@@ -1,9 +1,8 @@
 import * as ECS from "./ECS";
 import { Vector2D } from "../vector2D";
-import { KEYBOARD } from "../main";
 
 export class TransformComponent extends ECS.Component {
-  private _position: Vector2D = new Vector2D();
+  public _position: Vector2D = new Vector2D();
   private _velocity: Vector2D = new Vector2D();
   private _movment: Vector2D = new Vector2D();
 
@@ -64,6 +63,14 @@ export class TransformComponent extends ECS.Component {
     this._velocity.y = velocity[1];
   }
 
+  public set Xvelocity(velocity: number) {
+    this._velocity.x = velocity;
+  }
+
+  public set Yvelocity(velocity: number){
+    this._velocity.y = velocity;
+  }
+
   public get Xmovment(): number {
     return this._movment.x;
   }
@@ -116,11 +123,13 @@ export class TransformComponent extends ECS.Component {
   public init() {}
 
   public update() {
-    this.inputManager();
     this._movment.x = this._velocity.x;
     this._movment.y = this._velocity.y;
     this._movment.normalize();
-    //console.log(this._movment.length);
+    if(this.entity.name === "player"){
+      console.log("velocity : " + this._velocity.x + " " + this._velocity.y);
+      console.log("movment : " + this._movment.x + " " + this._movment.y);
+    }
     this._movment = this._movment.multiply(this._speed);
     this._position.x += this._movment.x;
     this._position.y += this._movment.y;
@@ -129,20 +138,5 @@ export class TransformComponent extends ECS.Component {
 
   public draw() {}
 
-  inputManager() {
-    if (KEYBOARD._keys["ArrowUp"] || KEYBOARD._keys["z"]) {
-      this._velocity.y = -1;
-    } else if (KEYBOARD._keys["ArrowDown"] || KEYBOARD._keys["s"]) {
-      this._velocity.y = 1;
-    } else {
-      this._velocity.y = 0;
-    }
-    if (KEYBOARD._keys["ArrowLeft"] || KEYBOARD._keys["q"]) {
-      this._velocity.x = -1;
-    } else if (KEYBOARD._keys["ArrowRight"] || KEYBOARD._keys["d"]) {
-      this._velocity.x = 1;
-    } else {
-      this._velocity.x = 0;
-    }
-  }
+  
 }

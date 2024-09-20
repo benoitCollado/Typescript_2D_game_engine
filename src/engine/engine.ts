@@ -3,6 +3,11 @@ import { Vector2D as Vec2 } from "./vector2D";
 import * as ECS from "./ECS/ECS";
 import { TransformComponent } from "./ECS/TransformComponent";
 import { SpriteComponent } from "./ECS/SpriteComponent";
+import { ColliderComponent } from "./ECS/ColliderComponent";
+import { Rect } from "./utils";
+import { Actor } from "./Actor";
+
+import { MANAGER } from "../engine/ECS/ECS";
 export class Engine {
   private _canvas: HTMLCanvasElement;
   private _startTime: number;
@@ -11,7 +16,7 @@ export class Engine {
   constructor(canvasID: string) {
     this._canvas = CTXU.initialize(canvasID);
     this._startTime = 0;
-    this._manager = new ECS.Manager();
+    this._manager = MANAGER;
     document.title = "Game Engine";
   }
   public resize() {
@@ -22,11 +27,30 @@ export class Engine {
   }
 
   start(): void {
-    let player = this._manager.addEntity("Palyer");
+    let player = new Actor("player");
+    let second = new Actor("second");
+    console.log(this._manager.entities);
     //console.log(player);
+    /*
     player.addComponent(TransformComponent, [200, 200], 2, 32, 32, 1);
     player.addComponent(SpriteComponent, "./dist/assets/player.png", 32, 32);
-    console.log("managers entities : " + Object.values(this._manager.entities));
+    player.addComponent(ColliderComponent, "Player", {
+      x: 200,
+      y: 200,
+      w: 32,
+      h: 32,
+    } as Rect);
+
+    second.addComponent(TransformComponent, [400, 400], 2, 32, 32, 3);
+    second.addComponent(SpriteComponent, "./dist/assets/player.png", 32, 32);
+    second.addComponent(ColliderComponent, "Second", {
+      x: 800,
+      y: 800,
+      w: 32,
+      h: 32,
+    } as Rect);
+*/
+    //console.log("managers entities : " + Object.values(this._manager.entities));
     this.loop(this._startTime);
     this.resize();
   }

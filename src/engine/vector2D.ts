@@ -68,7 +68,6 @@ export class Vector2D {
       const length = this.length;
       this.x = this.x / length;
       this.y = this.y / length;
-      console.log("length : " + this.length);
     }
   }
 }

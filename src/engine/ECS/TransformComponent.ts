@@ -126,10 +126,6 @@ export class TransformComponent extends ECS.Component {
     this._movment.x = this._velocity.x;
     this._movment.y = this._velocity.y;
     this._movment.normalize();
-    if(this.entity.name === "player"){
-      console.log("velocity : " + this._velocity.x + " " + this._velocity.y);
-      console.log("movment : " + this._movment.x + " " + this._movment.y);
-    }
     this._movment = this._movment.multiply(this._speed);
     this._position.x += this._movment.x;
     this._position.y += this._movment.y;

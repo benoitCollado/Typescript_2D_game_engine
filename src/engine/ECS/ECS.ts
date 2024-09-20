@@ -1,5 +1,5 @@
 import { Iconstructor } from "../utils";
-
+import{ TransformComponent } from "./TransformComponent";      
 export abstract class Component {
   public abstract _className: string;
 
@@ -34,6 +34,10 @@ export class Entity {
   public update(): void {
     const componentsValues = Object.values(this.components);
     componentsValues.forEach((component) => component.update());
+    if(this.name === "player"){
+      const transform = this.components["TransformComponent"] as TransformComponent;
+      console.log("transform : " + transform.x + " " + transform.y);
+    }
   }
 
   public draw(): void {

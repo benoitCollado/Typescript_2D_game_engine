@@ -4,6 +4,7 @@ import { ColliderComponent } from "./ECS/ColliderComponent";
 import { SpriteComponent } from "./ECS/SpriteComponent";
 import { KEYBOARD } from "../main";
 import { MANAGER } from "./ECS/ECS";
+import { threadId } from "worker_threads";
 
 export class Actor extends ECS.Entity {
   private _transform: TransformComponent;
@@ -12,7 +13,7 @@ export class Actor extends ECS.Entity {
 
   constructor(name: string) {
     super(MANAGER, name);
-    this._transform = this.addComponent(TransformComponent, [0, 0], 0, 0, 0, 1);
+    this._transform = this.addComponent(TransformComponent, [0, 0], 3, 32, 32, 1);
     this._collider = this.addComponent(ColliderComponent, name, {
       x: 0,
       y: 0,
@@ -37,8 +38,6 @@ export class Actor extends ECS.Entity {
       this.inputManager();
     }
     super.update();
-
-
   }
 
   draw() {

@@ -8,9 +8,10 @@ export class SpriteComponent extends ECS.Component{
   private _texture: HTMLImageElement;
   private _transform: TC;
 
+  //public _sprites : { [name: string]: SpriteComponent } = {};
+  
   private _source_rect: Rect = {x:0, y:0, w:32, h:32};
   private _dest_rect: Rect = {x:0, y:0, w:32, h:32};
-
   constructor(entity:ECS.Entity, path: string , height?:number , width?: number ){
     super(entity);
     this._texture = this.setTexture(path);

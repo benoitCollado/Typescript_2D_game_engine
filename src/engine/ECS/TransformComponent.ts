@@ -1,10 +1,15 @@
 import * as ECS from "./ECS";
 import { Vector2D } from "../vector2D";
+import { GeneratePrimeOptions } from "crypto";
+import { ctx } from "../graphics/ContextUtilities";
+import { isAscii } from "buffer";
+import { createContext } from "vm";
 
 export class TransformComponent extends ECS.Component {
   public _position: Vector2D = new Vector2D();
   private _velocity: Vector2D = new Vector2D();
   private _movment: Vector2D = new Vector2D();
+  private _moveToCoroutine: Generator | undefined;
 
   public _className: string = "TransformComponent";
 
@@ -39,6 +44,14 @@ export class TransformComponent extends ECS.Component {
     return this._position.y;
   }
 
+  public set x(x: number) {
+    this._position.x = x;
+  }
+
+  public set y(y: number) {
+    this._position.y = y;
+  }
+
   public get position(): [number, number] {
     return [this._position.x, this._position.y];
   }
@@ -67,7 +80,7 @@ export class TransformComponent extends ECS.Component {
     this._velocity.x = velocity;
   }
 
-  public set Yvelocity(velocity: number){
+  public set Yvelocity(velocity: number) {
     this._velocity.y = velocity;
   }
 
@@ -123,16 +136,102 @@ export class TransformComponent extends ECS.Component {
   public init() {}
 
   public update() {
-    this._movment.x = this._velocity.x;
-    this._movment.y = this._velocity.y;
-    this._movment.normalize();
-    this._movment = this._movment.multiply(this._speed);
-    this._position.x += this._movment.x;
-    this._position.y += this._movment.y;
+    if (this._moveToCoroutine !== undefined) {
+      const done = this._moveToCoroutine.next();
+      console.log("done " + done.value);
+      if (done.value) {
+        this._moveToCoroutine = undefined;
+        console.log(this._moveToCoroutine);
+      }
+    } else {
+      this._movment.x = this._velocity.x;
+      this._movment.y = this._velocity.y;
+      this._movment.normalize();
+      this._movment = this._movment.multiply(this._speed);
+      this._position.x += this._movment.x;
+      this._position.y += this._movment.y;
+    }
     //console.log(KEYBOARD._keys);
   }
 
-  public draw() {}
+  public draw() {
+    /*
+    if (this.entity.name === "player") {
+      ctx.beginPath();
+      ctx.arc(
+        this.x + this.Xvelocity,
+        this.y + this.Yvelocity,
+        30,
+        0,
+        2 * Math.PI,
+      );
+      ctx.fillStyle = "blue";
+      ctx.fill();
+      ctx.fillStyle = "black";
+    } else {
+      ctx.beginPath();
+      ctx.arc(
+        this.x + this._movment.x,
+        this.y + this._movment.y,
+        30,
+        0,
+        2 * Math.PI,
+      );
+      ctx.fillStyle = "red";
+      ctx.fill();
+      ctx.fillStyle = "black";
+    }*/
+  }
 
-  
+  public move_to(position: [number, number]): void {
+    this._moveToCoroutine = this._moveTo(position);
+  }
+
+  private *_moveTo(position: [number, number]): Generator<boolean> {
+    this.Xvelocity = position[0] - this.x;
+    this.Yvelocity = position[1] - this.y;
+    //console.log(this.Xvelocity + " " + this.Yvelocity);
+    while (
+      Math.abs(this.x - position[0]) > 0.1 ||
+      Math.abs(this.y - position[1]) > 0.1
+    ) {
+      //console.log("là");
+      this._movment.x = this._velocity.x;
+      this._movment.y = this._velocity.y;
+      this._movment.normalize();
+      this._movment = this._movment.multiply(this._speed);
+      const newPositonVec = new Vector2D(
+        position[0] - this.x,
+        position[1] - this.y
+      );
+      if (this._movment.length > newPositonVec.length) {
+        while (Math.abs(this.x - position[0]) > 0.1) {
+          this.x - position[0] > 0 ? this.x -= 0.05 : this.x += 0.05;
+          if (Math.abs(this.x - position[0]) < 0.1) {
+            this.x = position[0];
+            this.Xvelocity = 0;
+          }
+          console.log("x : " + this.x);
+        }
+        while (Math.abs(this.y - position[1]) > 0.1) {
+          this.y - position[1] > 0 ? this.y -= 0.05 : this.y += 0.05;
+          if (Math.abs(this.y - position[1]) < 0.1) {
+            this.y = position[1];
+            this.Yvelocity = 0;
+          }
+          console.log("y : " + this.y);
+        }
+        
+      } else {
+        this._position.x += this._movment.x;
+        this._position.y += this._movment.y;
+      }
+
+      yield false;
+    }
+    this.Xvelocity = 0;
+    this.Yvelocity = 0;
+    console.log("bonjour");
+    return true;
+  }
 }

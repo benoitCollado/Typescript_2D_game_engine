@@ -34,10 +34,6 @@ export class Entity {
   public update(): void {
     const componentsValues = Object.values(this.components);
     componentsValues.forEach((component) => component.update());
-    if(this.name === "player"){
-      const transform = this.components["TransformComponent"] as TransformComponent;
-      console.log("transform : " + transform.x + " " + transform.y);
-    }
   }
 
   public draw(): void {
@@ -54,6 +50,7 @@ export class Entity {
       console.log(
         this + " already has a component of type " + component._className,
       );
+      return this.components[component._className] as T;
     } else {
       this.components[component._className] = component;
     }

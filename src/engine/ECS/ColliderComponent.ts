@@ -46,8 +46,8 @@ export class ColliderComponent extends ECS.Component {//implements Observer{
             const Ymov = this._transform.Ymovment;
 
             if(Xmov > 0 && Ymov > 0){
-              const nearest_point:number[] = [];
-              const first = this.segment_intersection([this.get_top_right_corner()[0],this.get_top_right_corner()[1]], [this.get_bottom_right_corner()[0] + Xmov,this.get_bottom_right_corner()[1] + Ymov],[col.get_top_side()[0][0],col.get_top_side()[0][1]], );
+              //const nearest_point:number[] = [];
+             /* const first = this.segment_intersection([this.get_top_right_corner()[0],this.get_top_right_corner()[1]], [this.get_bottom_right_corner()[0] + Xmov,this.get_bottom_right_corner()[1] + Ymov],[col.get_top_side()[0][0],col.get_top_side()[0][1]],[col.get_top_side()[0][0],col.get_top_side()[0][1]] );*/
             }
             
             
@@ -128,7 +128,7 @@ export class ColliderComponent extends ECS.Component {//implements Observer{
   }
 
   get_left_side():[[number,number],[number,number]]{
-    return[[this._colliderRect.x + , this._colliderRect.y],[this._colliderRect.x,this._colliderRect.y + this._colliderRect.h]];
+    return[[this._colliderRect.x  , this._colliderRect.y],[this._colliderRect.x,this._colliderRect.y + this._colliderRect.h]];
   }
   get_top_side():[[number,number],[number,number]]{
     return[[this._colliderRect.x, this._colliderRect.y],[this._colliderRect.x + this._colliderRect.w, this._colliderRect.y]];

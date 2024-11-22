@@ -1,9 +1,10 @@
 import { Iconstructor } from "../utils";
-import{ TransformComponent } from "./TransformComponent";      
+import { ColliderComponent } from "./ColliderComponent";
 export abstract class Component {
   public abstract _className: string;
 
-  protected entity: Entity;
+  public entity: Entity;
+  public order: number = 0;
 
   constructor(entity: Entity) {
     this.entity = entity;
@@ -16,10 +17,11 @@ export abstract class Component {
 
 export class Entity {
   protected active: boolean;
-  protected components: { [name: string]: Component } = {};
+  protected components: Component[] = [];
+  protected componentsName: string[] = [];
   public name: string;
 
-  protected manager: Manager;
+  public manager: Manager;
 
   constructor(manager: Manager, name: string) {
     this.active = true;
@@ -27,9 +29,7 @@ export class Entity {
     this.name = name;
   }
 
-  public init(){
-    
-  }
+  public init() {}
 
   public update(): void {
     const componentsValues = Object.values(this.components);
@@ -46,59 +46,101 @@ export class Entity {
     ...args: any
   ): T {
     const component = new type(this, ...args);
-    if (this.components[component._className] !== undefined) {
+    if (this.componentsName.includes(component._className)) {
       console.log(
-        this + " already has a component of type " + component._className,
+        this.name + " already has a component of type " + component._className,
       );
-      return this.components[component._className] as T;
+      this.components.forEach((comp) => {
+        if (comp._className === component._className) {
+          return comp as T;
+        }
+      });
     } else {
-      this.components[component._className] = component;
+      ("component added");
+      this.components.push(component);
+      this.componentsName.push(component._className);
     }
+    this.components.sort((a, b) => b.order - a.order);
     return component;
   }
 
-  public hasComponent(componentName: string): boolean {
-    if (this.components[componentName] !== undefined) {
-      return true;
-    } else {
-      return false;
-    }
+  public hasComponent<T extends Component>(type: Iconstructor<T>): boolean {
+    let present = false;
+    this.components.forEach((component) => {
+      console.log(component instanceof type);
+      if (component instanceof type) {
+        console.log("ici");
+        present = true;
+      }
+    });
+    console.log("bahaha");
+    return present;
   }
 
-  public getComponent<T extends Component>(className: string): T {
-    return this.components[className] as T;
+  public getComponent<T extends Component>(
+    type: Iconstructor<T>,
+  ): T | undefined {
+    let returnComponent: T | undefined;
+    this.components.forEach((component) => {
+      console.log(component instanceof type);
+      if (component instanceof type) {
+        console.log(component);
+        returnComponent = component as T;
+      }
+    });
+    return returnComponent;
   }
 }
 
 export class Manager {
-  public entities: { [name: string]: Entity } = {};
-
+  public entities: { [name: string]: Entity[] } = {
+    default: [new Entity(MANAGER, "default")],
+  };
+  public collidables: { [name: string]: ColliderComponent[] } = {};
   public update(): void {
     const entitiesValues = Object.values(this.entities);
-    entitiesValues.forEach((entity) => entity.update());
+    entitiesValues.forEach((entity) => {
+      entity.forEach((entiti) => entiti.update());
+    });
   }
 
   public draw(): void {
     const entitiesValues = Object.values(this.entities);
-    //console.log(this.entities);
     entitiesValues.forEach((entity) => {
-      //console.log("dans les forEach");
-      //console.log(entity);
-      entity.draw();
+      entity.forEach((entiti) => entiti.draw());
     });
   }
 
-  public addEntity(entity: Entity):void{
-    /*const entity = new Entity(this, name);*/
+  public addEntity(entity: Entity): void {
     console.log("addentity : ");
     console.log(entity);
-    if (this.entities[entity.name] !== undefined) {
-      //throw new Error("Entity with this name alreade exist");
-      console.log("Entity with this name alreade exist");
+
+    console.log(this.entities);
+    if (this.entities[entity.name]) {
+      if (this.entities[entity.name].includes(entity)) {
+        console.log("Entity with this name alreade exist");
+      } else {
+        this.entities[entity.name].push(entity);
+      }
     } else {
-      this.entities[entity.name] = entity;
+      this.entities[entity.name] = [entity];
     }
-    //return entity;
+  }
+
+  public addCollidable(collider: ColliderComponent): void {
+    console.log("Add Collidable");
+    console.log(collider);
+    if (this.collidables[collider._colliderTag]) {
+      if (this.collidables[collider._colliderTag].includes(collider)) {
+        console.log("Collidable alreadey exist");
+      } else {
+        this.collidables[collider.entity.name].push(collider);
+      }
+    } else {
+      this.collidables[collider.entity.name] = [collider];
+    }
+    console.log("collidables");
+    console.log(this.collidables);
   }
 }
 

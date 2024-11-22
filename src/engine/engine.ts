@@ -1,23 +1,29 @@
 import { ContextUtilities as CTXU, ctx } from "./graphics/ContextUtilities";
-import { Vector2D as Vec2 } from "./vector2D";
 import * as ECS from "./ECS/ECS";
-import { TransformComponent } from "./ECS/TransformComponent";
-import { SpriteComponent } from "./ECS/SpriteComponent";
-import { ColliderComponent } from "./ECS/ColliderComponent";
-import { Rect } from "./utils";
-import { Actor } from "./Actor";
-
+import { Player } from "../Player";
+import { Enemy } from "../Enemy";
 import { MANAGER } from "../engine/ECS/ECS";
+//import { CollisionManager } from "../engine/CollisionDetector";
+//import {COLLISION_MANAGER} from "./utils";
+
 export class Engine {
   private _canvas: HTMLCanvasElement;
   private _startTime: number;
   private _manager: ECS.Manager;
+  private _sum: number;
+  private _frame: number;
+  private _fps: number;
+  //private _collision_manager: CollisionManager;
 
   constructor(canvasID: string) {
     this._canvas = CTXU.initialize(canvasID);
     this._startTime = 0;
     this._manager = MANAGER;
+    //this._collision_manager = COLLISION_MANAGER;
     document.title = "Game Engine";
+    this._fps = 0;
+    this._sum = 0;
+    this._frame = 0;
   }
   public resize() {
     if (this._canvas !== undefined) {
@@ -27,30 +33,13 @@ export class Engine {
   }
 
   start(): void {
-    let player = new Actor("player");
-    let second = new Actor("second");
+    let player = new Player();
+    let second = new Enemy();
+    second._transform.x = 300;
+    second._transform.y = 300;
+    second.followTo = player;
     console.log(this._manager.entities);
-    //console.log(player);
-    /*
-    player.addComponent(TransformComponent, [200, 200], 2, 32, 32, 1);
-    player.addComponent(SpriteComponent, "./dist/assets/player.png", 32, 32);
-    player.addComponent(ColliderComponent, "Player", {
-      x: 200,
-      y: 200,
-      w: 32,
-      h: 32,
-    } as Rect);
 
-    second.addComponent(TransformComponent, [400, 400], 2, 32, 32, 3);
-    second.addComponent(SpriteComponent, "./dist/assets/player.png", 32, 32);
-    second.addComponent(ColliderComponent, "Second", {
-      x: 800,
-      y: 800,
-      w: 32,
-      h: 32,
-    } as Rect);
-*/
-    //console.log("managers entities : " + Object.values(this._manager.entities));
     this.loop(this._startTime);
     this.resize();
   }
@@ -58,14 +47,23 @@ export class Engine {
     if (this._startTime === undefined) {
       this._startTime = timeStamp;
     }
-    //console.log(ctx);
-    //ctx.fillStyle = "rgb(0.3,0.2,0.5,1)";
+    ctx.fillStyle = "black";
     ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
     this._manager.update();
+    //this._collision_manager.update();
     this._manager.draw();
     const deltaTime = timeStamp - this._startTime;
-    // document.title = (1 / (deltaTime / 1000)).toString();
-
+    this._sum += deltaTime;
+    this._frame += 1;
+    if (this._sum/1000 > 1) {
+      this._fps = Math.round(1/((this._sum / this._frame)/1000));
+      this._sum = 0;
+      this._frame = 0;
+     
+    }
+    ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
+    ctx.fillText("FPS : " + this._fps, 150, 40);
     this._startTime = timeStamp;
     requestAnimationFrame((time) => this.loop(time));
   }

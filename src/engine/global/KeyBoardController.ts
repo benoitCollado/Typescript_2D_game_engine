@@ -8,12 +8,10 @@ export class KeyBoardController {
   public init() {
     window.addEventListener("keydown", (event) => {
       this._keys[event.key] = true;
-      //console.log("keydown :" + event.key);
     });
 
     window.addEventListener("keyup", (event) => {
       this._keys[event.key] = false;
-      //console.log("keyup :" + event.key);
     });
   }
 }

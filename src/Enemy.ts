@@ -3,8 +3,8 @@ import { Player } from "./Player";
 
 export class Enemy extends Actor {
   public followTo: Player | undefined;
-  constructor() {
-    super("enemy");
+  constructor(position:[number,number]=[0,0]) {
+    super("enemy", position);
   }
 
   update(): void {

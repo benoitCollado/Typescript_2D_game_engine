@@ -10,19 +10,19 @@ export class Actor extends ECS.Entity {
   public _collider: ColliderComponent;
   public _sprite: SpriteComponent;
 
-  constructor(name: string) {
+  constructor(name: string, position:[number, number]=[0,0]) {
     super(MANAGER, name);
     this._transform = this.addComponent(
       TransformComponent,
-      [0, 0],
+      position,
       3,
       32,
       32,
       1,
     );
     this._collider = this.addComponent(ColliderComponent, name, {
-      x: 0,
-      y: 0,
+      x: position[0],
+      y: position[1],
       w: 32,
       h: 32,
     },
@@ -47,9 +47,6 @@ export class Actor extends ECS.Entity {
   }
 
   update() {
-    if (this.name === "player") {
-      this.inputManager();
-    }
     super.update();
   }
 
@@ -57,24 +54,5 @@ export class Actor extends ECS.Entity {
     super.draw();
   }
 
-  inputManager() {
-    if (KEYBOARD._keys["ArrowUp"] || KEYBOARD._keys["z"]) {
-      //this._transform.Yvelocity = -1;
-      this._transform.move_to([this._transform.x, this._transform.y - 5]);
-    } else if (KEYBOARD._keys["ArrowDown"] || KEYBOARD._keys["s"]) {
-      //this._transform.Yvelocity = 1;
-      this._transform.move_to([this._transform.x, this._transform.y + 5]);
-    } else {
-      //this._transform.Yvelocity = 0;
-    }
-    if (KEYBOARD._keys["ArrowLeft"] || KEYBOARD._keys["q"]) {
-      //this._transform.Xvelocity = -1;
-      this._transform.move_to([this._transform.x - 5, this._transform.y]);
-    } else if (KEYBOARD._keys["ArrowRight"] || KEYBOARD._keys["d"]) {
-      //this._transform.Xvelocity = 1;
-      this._transform.move_to([this._transform.x + 5, this._transform.y]);
-    } else {
-      //this._transform.Xvelocity = 0;
-    }
-  }
+ 
 }

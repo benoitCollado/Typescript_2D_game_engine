@@ -5,7 +5,7 @@ export class TransformComponent extends ECS.Component {
   public _position: Vector2D = new Vector2D();
   private _velocity: Vector2D = new Vector2D();
   private _movment: Vector2D = new Vector2D();
-  private _moveToCoroutine: Generator | undefined;
+  private _moveToCoroutine: Generator | null = null;
   
 
   public _className: string = "TransformComponent";
@@ -143,10 +143,10 @@ export class TransformComponent extends ECS.Component {
 
   public update() {
     
-    if (this._moveToCoroutine !== undefined) {
+    if (this._moveToCoroutine !== null) {
       const done = this._moveToCoroutine.next();
       if (done.value) {
-        this._moveToCoroutine = undefined;
+        this._moveToCoroutine = null;
       }
     } else {
       this._movment.x = this._velocity.x;
@@ -165,6 +165,11 @@ export class TransformComponent extends ECS.Component {
 
   public move_to(position: [number, number]): void {
     this._moveToCoroutine = this._moveTo(position);
+  }
+
+  public move_direction(direction: [number, number]): void{
+    console.log("premier : " , direction);
+    this._moveToCoroutine = this._moveDirection(direction);
   }
 
   private *_moveTo(position: [number, number]): Generator<boolean> {
@@ -207,5 +212,18 @@ export class TransformComponent extends ECS.Component {
     this.Xvelocity = 0;
     this.Yvelocity = 0;
     return true;
+  }
+  private * _moveDirection(direction: [number, number]): Generator<Boolean>{
+    console.log("là : ", direction );
+    this._movment.x = direction[0] ;
+    this._movment.y = direction[1] ;
+    console.log("après");
+    while(true){
+    this._position.x += this._movment.x;
+    this._position.y += this._movment.y;
+    console.log("dans le moveDirection");
+    yield false;
+    }
+    
   }
 }

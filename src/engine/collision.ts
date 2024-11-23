@@ -17,11 +17,11 @@ export class Collision {
       return [false, false];
     }
 
-    console.log(colliderA._colliderTag + " collides with " + colliderB._colliderTag);
+    //console.log(colliderA._colliderTag + " collides with " + colliderB._colliderTag);
     let solid = false;
     if (colliderA._solid && colliderB._solid) {
       solid = true;
-      console.log("solid");
+      //console.log("solid");
     }
     return [true, solid];
   }

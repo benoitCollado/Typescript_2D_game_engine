@@ -34,10 +34,9 @@ export class Engine {
 
   start(): void {
     let player = new Player();
-    let second = new Enemy();
-    second._transform.x = 300;
-    second._transform.y = 300;
-    second.followTo = player;
+    let second = new Enemy([300,300]);
+    let third = new Enemy([500,500]);
+    //second.followTo = player;
     console.log(this._manager.entities);
 
     this.loop(this._startTime);
@@ -59,8 +58,8 @@ export class Engine {
       this._fps = Math.round(1/((this._sum / this._frame)/1000));
       this._sum = 0;
       this._frame = 0;
-     
     }
+    //console.log("j'ai modifié");
     ctx.fillStyle = "white";
     ctx.font = "20px Arial";
     ctx.fillText("FPS : " + this._fps, 150, 40);

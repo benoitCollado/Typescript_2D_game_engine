@@ -1,5 +1,6 @@
 import { Iconstructor } from "../utils";
 import { ColliderComponent } from "./ColliderComponent";
+
 export abstract class Component {
   public abstract _className: string;
 
@@ -112,7 +113,7 @@ export class Manager {
   }
 
   public addEntity(entity: Entity): void {
-    console.log("addentity : ");
+    console.log("addEntity : ");
     console.log(entity);
 
     console.log(this.entities);
@@ -125,6 +126,17 @@ export class Manager {
     } else {
       this.entities[entity.name] = [entity];
     }
+  }
+  public removeEntity(entity: Entity): void{
+    console.log("removeEntity : ");
+    console.log(entity);
+
+    console.log(this.entities);
+    this.entities[entity.name].forEach(entitie =>{
+      if(entitie === entity){
+        this.entities[entity.name].splice(this.entities[entity.name].indexOf(entitie), 1);
+      }
+    });
   }
 
   public addCollidable(collider: ColliderComponent): void {

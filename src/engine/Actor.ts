@@ -2,7 +2,6 @@ import * as ECS from "./ECS/ECS";
 import { TransformComponent } from "./ECS/TransformComponent";
 import { ColliderComponent } from "./ECS/ColliderComponent";
 import { SpriteComponent } from "./ECS/SpriteComponent";
-import { KEYBOARD } from "../main";
 import { MANAGER } from "./ECS/ECS";
 
 export class Actor extends ECS.Entity {
@@ -10,7 +9,7 @@ export class Actor extends ECS.Entity {
   public _collider: ColliderComponent;
   public _sprite: SpriteComponent;
 
-  constructor(name: string, position:[number, number]=[0,0]) {
+  constructor(name: string, position:[number, number]=[0,0], texture: HTMLImageElement = new Image()) {
     super(MANAGER, name);
     this._transform = this.addComponent(
       TransformComponent,
@@ -29,7 +28,7 @@ export class Actor extends ECS.Entity {
       true);
     this._sprite = this.addComponent(
       SpriteComponent,
-      "./dist/assets/player.png",
+      texture,
       32,
       32,
     );

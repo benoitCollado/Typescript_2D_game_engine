@@ -1,13 +1,20 @@
 import {Actor} from "./engine/Actor"
 import { KEYBOARD } from "./main";
 import {Projectile} from "./Projectile";
+import {IMAGE_LOADER} from "./engine/ImageLoader";
 export class Player extends Actor{
 
   direction : [number, number] = [1,0];
   
   constructor(position:[number, number]=[0,0]){
     super("player", position);
+    this.init();
   }
+
+  init(): void {
+   super.init();
+    this._sprite.setTexture(IMAGE_LOADER.getImage("player")); 
+}
 
   update() {
     this.inputManager();
@@ -45,7 +52,7 @@ export class Player extends Actor{
 
     if(KEYBOARD._keys["Space"]){
       console.log("dans le player : ", this.direction);
-      const projectile = new Projectile("projectile", [this._transform.x, this._transform.y], this.direction);
+      const projectile = new Projectile("projectile", [this._transform.x, this._transform.y], this.direction, 20);
     }
   }
   

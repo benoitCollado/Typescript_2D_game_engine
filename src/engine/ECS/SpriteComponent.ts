@@ -12,12 +12,12 @@ export class SpriteComponent extends ECS.Component {
   private _dest_rect: Rect = { x: 0, y: 0, w: 32, h: 32 };
   constructor(
     entity: ECS.Entity,
-    path: string,
+    texture: HTMLImageElement,
     height?: number,
     width?: number,
   ) {
     super(entity);
-    this._texture = this.setTexture(path);
+    this._texture = texture;
     this._transform = this.entity.getComponent(TransformComponent) as TC;
     console.log(this._transform);
     if (height !== undefined) {
@@ -29,13 +29,9 @@ export class SpriteComponent extends ECS.Component {
     this.order = -100;
   }
 
-  public setTexture(path: string): HTMLImageElement {
-    let image = new Image();
-    image.src = path;
-    image.onload = function () {
-      console.log("image loaded");
-    };
-    return image;
+  public setTexture(texture: HTMLImageElement): void {
+    this._texture = texture;
+    
   }
   public init() {}
 

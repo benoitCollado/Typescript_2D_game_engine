@@ -219,8 +219,8 @@ export class TransformComponent extends ECS.Component {
     this._movment.y = direction[1] ;
     console.log("après");
     while(true){
-    this._position.x += this._movment.x;
-    this._position.y += this._movment.y;
+    this._position.x += this._movment.x * this._speed;
+    this._position.y += this._movment.y * this._speed;
     console.log("dans le moveDirection");
     yield false;
     }

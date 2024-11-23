@@ -1,6 +1,7 @@
 import { Engine } from "./engine/engine";
 import { KeyBoardController } from "./engine/global/KeyBoardController";
 let Game: Engine;
+import {IMAGE_LOADER} from "./engine/ImageLoader";
 export let KEYBOARD: KeyBoardController = new KeyBoardController();
 /*
 function *integers(){
@@ -21,6 +22,8 @@ console.log("fichier javascript chargé");
 */
 window.onload = () => {
   Game = new Engine("gameCanvas");
+  IMAGE_LOADER.loadImage("player", "./dist/assets/player.png");
+  IMAGE_LOADER.loadImage("projectile", "./dist/assets/projectile.png");
   Game.start();
 };
 

@@ -24,8 +24,11 @@ window.onload = () => {
   Game = new Engine("gameCanvas");
   IMAGE_LOADER.loadImage("player", "./dist/assets/player.png");
   IMAGE_LOADER.loadImage("projectile", "./dist/assets/projectile.png");
-  Game.start();
 };
+window.addEventListener("AllImageLoaded", () =>{
+  console.log("AllImageLoaded");
+  Game.start();
+})
 
 window.onresize = () => {
   Game.resize();

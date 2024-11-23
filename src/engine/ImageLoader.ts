@@ -13,11 +13,13 @@ class ImageLoader {
     const image = new Image();
     image.src = path;
     image.onload = () => {
+      console.log("dans le image onload , " , image );
       this._images[name] = image;
       this._loadedImages += 1;
       /*if (this._loadedImages === this._totalImages) {
         //this._loadedCallback();
       }*/
+      this.checkAllImageLoaded();
     };
     image.onerror = (error) => {
       console.log(error);
@@ -25,8 +27,17 @@ class ImageLoader {
     this._totalImages += 1;
   }
   public getImage(name: string): HTMLImageElement {
+    console
+    console.log("dans le getImage : ", this._images[name] );
     return this._images[name];
   } 
+  public checkAllImageLoaded(){
+    if(this._loadedImages === this._totalImages){
+      window.dispatchEvent(allImageLoaded);
+    }
+  }
+ 
 }
+const allImageLoaded = new CustomEvent("AllImageLoaded");
 
  export const IMAGE_LOADER = new ImageLoader()

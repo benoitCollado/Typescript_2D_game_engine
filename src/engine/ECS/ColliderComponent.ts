@@ -2,12 +2,14 @@ import * as ECS from "./ECS";
 import { TransformComponent } from "./TransformComponent";
 import { Rect } from "../utils";
 import { Collision } from "../collision";
+import {Emitter, Observer, CollisionEventArgs, EventArgs} from "../utils";
 
-export class ColliderComponent extends ECS.Component {
+export class ColliderComponent extends ECS.Component implements Emitter {
   //implements Observer{
   public _colliderTag: string;
   public _colliderRect: Rect;
   public _className: string = "ColliderComponent";
+  public observers: Observer[] = [];
 
   //public static _colliders : ColliderComponent[] = [];
   public _transform: TransformComponent;
@@ -19,6 +21,8 @@ export class ColliderComponent extends ECS.Component {
     solid: boolean,
   ) {
     super(entity);
+    this.attach(entity);
+    console.log("observers : ", this.observers);
     this.order = 0;
     this._colliderTag = colliderType;
     this._colliderRect = colliderRect;
@@ -32,7 +36,6 @@ export class ColliderComponent extends ECS.Component {
       TransformComponent,
     ) as TransformComponent;
     this.entity.manager.addCollidable(this);
-
     //COLLISION_MANAGER.attach(this);
   }
 
@@ -62,34 +65,54 @@ export class ColliderComponent extends ECS.Component {
             this._transform.y = last_pos_y;
             this._colliderRect.x = this._transform.x;
             this._colliderRect.y = this._transform.y;
-          }
-          /*if(check_collision[0] && check_collision[1]){
-            if(this._transform.Xmovment > 0){
-              this.set_right(col.get_left() - 1)
-            }else if(this._transform.Xmovment < 0){
-              this.set_left(col.get_right() + 1)
+            const eventArgs : CollisionEventArgs = {
+              eventName:"collision",
+                solid: check_collision[1],
+                other: col,
             }
-          }
-
-          check_collision = Collision.AABB(this,col);
-          if(check_collision[0] && check_collision[1]){
-            if(this._transform.Ymovment > 0){
-              this.set_bottom(col.get_top() - 1)
-            }else if (this._transform.Ymovment < 0){
-              this.set_top(col.get_bottom() + 1)
+            console.log(eventArgs);
+            this.notify<ColliderComponent,CollisionEventArgs >(this, eventArgs);
+          }else if(check_collision[0]){
+          const eventArgs : CollisionEventArgs = {
+              eventName:"collision",
+                solid: check_collision[1],
+                other: col,
             }
-          }*/
+            console.log(eventArgs);
+            this.notify<ColliderComponent,CollisionEventArgs >(this, eventArgs);
+            
+          }
         }
       });
     }
-    /*this._transform.x = this._colliderRect.x;
-    this._transform.y = this._colliderRect.y;*/
-    /*if(type === this._colliderTag){
-        let collisionInfo: CollisionInfo = Collision.checkCollision(this._colliderRect, other._colliderRect);
-        if(collisionInfo.collided){
-          this.entity.manager._collisionsManager.notify(this, other, type);
+  }
+
+  attach(observer: Observer): void {
+    const isExist = this.observers.includes(observer);
+    if (isExist) {
+        return console.log('Subject: Observer has been attached already.');
+    }
+
+    console.log('Subject: Attached an observer.');
+    this.observers.push(observer);
+  }
+
+  detach(observer: Observer): void{
+    const observerIndex = this.observers.indexOf(observer);
+        if (observerIndex === -1) {
+            return console.log('Subject: Nonexistent observer.');
         }
-      }*/
+
+        this.observers.splice(observerIndex, 1);
+        console.log('Subject: Detached an observer.');
+  }
+  
+  notify<T extends Emitter, U extends EventArgs>(emitter: T, args: U): void{
+    console.log('Subject: Notifying observers...', emitter, args);
+    console.log(this.entity.manager.entities);
+    for (const observer of this.observers) {
+        observer.notified(emitter, args);
+    }
   }
 
   check_solid_collision(other: ColliderComponent): boolean {
@@ -246,5 +269,9 @@ export class ColliderComponent extends ECS.Component {
     )
       return [false, [0, 0]];
     return [intersect, [Sx, Sy]];
+  }
+
+  public destroy():void{
+    this.entity.manager.removeCollidable(this);
   }
 }

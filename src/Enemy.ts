@@ -10,7 +10,7 @@ export class Enemy extends Actor {
   }
 
   init(): void {
-   this._sprite.setTexture(IMAGE_LOADER.getImage("enemy")); 
+   this._sprite.setTexture(IMAGE_LOADER.getImage("player")); 
 }
 
   update(): void {

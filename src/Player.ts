@@ -5,7 +5,7 @@ import {IMAGE_LOADER} from "./engine/ImageLoader";
 export class Player extends Actor{
 
   direction : [number, number] = [1,0];
-  
+  cooldown : number = 0;
   constructor(position:[number, number]=[0,0]){
     super("player", position);
     this.init();
@@ -13,7 +13,8 @@ export class Player extends Actor{
 
   init(): void {
    super.init();
-    this._sprite.setTexture(IMAGE_LOADER.getImage("player")); 
+    this._sprite.setTexture(IMAGE_LOADER.getImage("player"));
+    this.cooldown = 60;
 }
 
   update() {
@@ -48,11 +49,15 @@ export class Player extends Actor{
       this.direction = [x_goal,y_goal];
     }
 
-    this._transform.move_to([this._transform.x + x_goal * 5, this._transform.y + y_goal * 5]);
-
-    if(KEYBOARD._keys["Space"]){
-      console.log("dans le player : ", this.direction);
-      const projectile = new Projectile("projectile", [this._transform.x, this._transform.y], this.direction, 20);
+    this._transform.move_to([this._transform.x + x_goal * this._transform.speed, this._transform.y + y_goal * this._transform.speed]);
+    if(this.cooldown  === 0){
+      if(KEYBOARD._keys["Space"]){
+        console.log("dans le player : ", this.direction);
+        const projectile = new Projectile("projectile", [this._transform.x, this._transform.y], this.direction, 10);
+        this.cooldown = 30;
+      }
+    }else{
+      this.cooldown = this.cooldown - 1;
     }
   }
   

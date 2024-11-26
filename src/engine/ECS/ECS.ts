@@ -1,4 +1,4 @@
-import { Iconstructor } from "../utils";
+import { Iconstructor, Observer, Emitter, EventArgs } from "../utils";
 import { ColliderComponent } from "./ColliderComponent";
 
 export abstract class Component {
@@ -14,9 +14,12 @@ export abstract class Component {
   abstract init(): void;
   abstract update(): void;
   abstract draw(): void;
+  public destroy(): void{
+    
+  };
 }
 
-export class Entity {
+export class Entity implements Observer{
   protected active: boolean;
   protected components: Component[] = [];
   protected componentsName: string[] = [];
@@ -91,6 +94,23 @@ export class Entity {
     });
     return returnComponent;
   }
+
+  notified<T extends Emitter, U extends EventArgs>(emitter: T, Args:U): void {}
+
+  destroy(){
+    this.active = false;
+    this.components.forEach((component) => {
+      component.destroy();
+    });
+    this.components = [];
+    this.componentsName = [];
+    this.manager.removeEntity(this);
+    console.log(this.manager.entities)
+  }
+
+  public isActive(): boolean{
+      return this.active;
+  }
 }
 
 export class Manager {
@@ -101,14 +121,23 @@ export class Manager {
   public update(): void {
     const entitiesValues = Object.values(this.entities);
     entitiesValues.forEach((entity) => {
-      entity.forEach((entiti) => entiti.update());
-    });
+      entity.forEach((entiti) => {
+        if (entiti.isActive()) {
+          entiti.update();
+        }
+           });;
+    });;
   }
 
+ 
+  
   public draw(): void {
     const entitiesValues = Object.values(this.entities);
     entitiesValues.forEach((entity) => {
-      entity.forEach((entiti) => entiti.draw());
+      entity.forEach((entiti) => {
+        if(entiti.isActive()){
+          entiti.draw()
+        }});
     });
   }
 
@@ -153,6 +182,9 @@ export class Manager {
     }
     console.log("collidables");
     console.log(this.collidables);
+  }
+
+  public removeCollidable(collider: ColliderComponent): void{   this.collidables[collider.entity.name].splice(this.collidables[collider.entity.name].indexOf(collider), 1);
   }
 }
 

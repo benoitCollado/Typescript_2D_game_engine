@@ -13,6 +13,10 @@ export class TransformComponent extends ECS.Component {
   private _speed: number;
   private _width: number;
   private _height: number;
+  
+  public offsetx: number = 0;
+  public offsety: number = 0;
+  public origin_point : string;
 
   private _scale: number;
 
@@ -32,6 +36,12 @@ export class TransformComponent extends ECS.Component {
     this._height = height;
     this._scale = scale;
     this.order = 100;
+    this.origin_point = "CENTER";
+    if(this.origin_point === "CENTER"){
+      this.offsetx = this._width /2;
+      this.offsety = this._height/2;
+    }
+    
   }
 
   public get x(): number {
@@ -168,7 +178,6 @@ export class TransformComponent extends ECS.Component {
   }
 
   public move_direction(direction: [number, number]): void{
-    console.log("premier : " , direction);
     this._moveToCoroutine = this._moveDirection(direction);
   }
 
@@ -214,14 +223,11 @@ export class TransformComponent extends ECS.Component {
     return true;
   }
   private * _moveDirection(direction: [number, number]): Generator<Boolean>{
-    console.log("là : ", direction );
     this._movment.x = direction[0] ;
     this._movment.y = direction[1] ;
-    console.log("après");
     while(true){
     this._position.x += this._movment.x * this._speed;
     this._position.y += this._movment.y * this._speed;
-    console.log("dans le moveDirection");
     yield false;
     }
     

@@ -19,7 +19,6 @@ export class SpriteComponent extends ECS.Component {
     super(entity);
     this._texture = texture;
     this._transform = this.entity.getComponent(TransformComponent) as TC;
-    console.log(this._transform);
     if (height !== undefined) {
       this._source_rect.h = height;
     }

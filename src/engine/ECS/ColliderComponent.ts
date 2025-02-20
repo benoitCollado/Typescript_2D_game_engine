@@ -3,6 +3,7 @@ import { TransformComponent } from "./TransformComponent";
 import { Rect } from "../utils";
 import { Collision } from "../collision";
 import {Emitter, Observer, CollisionEventArgs, EventArgs} from "../utils";
+import { ctx } from "../graphics/ContextUtilities";
 
 export class ColliderComponent extends ECS.Component implements Emitter {
   //implements Observer{
@@ -14,6 +15,7 @@ export class ColliderComponent extends ECS.Component implements Emitter {
   //public static _colliders : ColliderComponent[] = [];
   public _transform: TransformComponent;
   public _solid: boolean;
+  
   constructor(
     entity: ECS.Entity,
     colliderType: string,
@@ -22,16 +24,13 @@ export class ColliderComponent extends ECS.Component implements Emitter {
   ) {
     super(entity);
     this.attach(entity);
-    console.log("observers : ", this.observers);
     this.order = 0;
     this._colliderTag = colliderType;
     this._colliderRect = colliderRect;
-    console.log(this.entity.hasComponent(TransformComponent));
     if (!this.entity.hasComponent(TransformComponent)) {
       this.entity.addComponent(TransformComponent, [0, 0], 0, 0, 0, 1);
     }
     this._solid = solid;
-    console.log(this.entity.getComponent(TransformComponent));
     this._transform = this.entity.getComponent(
       TransformComponent,
     ) as TransformComponent;
@@ -40,9 +39,10 @@ export class ColliderComponent extends ECS.Component implements Emitter {
   }
 
   init() {}
+  
   update() {
-    this._colliderRect.x = this._transform.x;
-    this._colliderRect.y = this._transform.y;
+    this._colliderRect.x = this._transform.x - this._transform.offsetx;
+    this._colliderRect.y = this._transform.y - this._transform.offsety;
     this._colliderRect.w = this._transform.width;
     this._colliderRect.h = this._transform.height;
     for (let other in this.entity.manager.collidables) {
@@ -55,7 +55,6 @@ export class ColliderComponent extends ECS.Component implements Emitter {
             const last_pos_y = this._transform.y - this._transform.Ymovment;
             const Xmov :number = this._transform.Xmovment;
             const Ymov:number = this._transform.Ymovment;
-            //console.log("ici");
 
             /*if(Xmov > 0 && Ymov > 0){
               const nearest_point:number[] = [];
@@ -63,14 +62,13 @@ export class ColliderComponent extends ECS.Component implements Emitter {
             }*/
             this._transform.x = last_pos_x;
             this._transform.y = last_pos_y;
-            this._colliderRect.x = this._transform.x;
-            this._colliderRect.y = this._transform.y;
+            this._colliderRect.x = this._transform.x - this._transform.offsetx;
+            this._colliderRect.y = this._transform.y - this._transform.offsety;
             const eventArgs : CollisionEventArgs = {
               eventName:"collision",
                 solid: check_collision[1],
                 other: col,
             }
-            console.log(eventArgs);
             this.notify<ColliderComponent,CollisionEventArgs >(this, eventArgs);
           }else if(check_collision[0]){
           const eventArgs : CollisionEventArgs = {
@@ -78,7 +76,6 @@ export class ColliderComponent extends ECS.Component implements Emitter {
                 solid: check_collision[1],
                 other: col,
             }
-            console.log(eventArgs);
             this.notify<ColliderComponent,CollisionEventArgs >(this, eventArgs);
             
           }
@@ -93,7 +90,6 @@ export class ColliderComponent extends ECS.Component implements Emitter {
         return console.log('Subject: Observer has been attached already.');
     }
 
-    console.log('Subject: Attached an observer.');
     this.observers.push(observer);
   }
 
@@ -104,12 +100,9 @@ export class ColliderComponent extends ECS.Component implements Emitter {
         }
 
         this.observers.splice(observerIndex, 1);
-        console.log('Subject: Detached an observer.');
   }
   
   notify<T extends Emitter, U extends EventArgs>(emitter: T, args: U): void{
-    console.log('Subject: Notifying observers...', emitter, args);
-    console.log(this.entity.manager.entities);
     for (const observer of this.observers) {
         observer.notified(emitter, args);
     }
@@ -118,7 +111,15 @@ export class ColliderComponent extends ECS.Component implements Emitter {
   check_solid_collision(other: ColliderComponent): boolean {
     return this._solid && other._solid;
   }
-  draw() {}
+
+  
+  draw() {
+    ctx.fillStyle = "green";
+    ctx.beginPath();
+    ctx.rect(this._colliderRect.x, this._colliderRect.y , this._colliderRect.w, this._colliderRect.h );
+    ctx.stroke();
+    ctx.fillStyle = "white";
+  }
   /*
   notified(info:CollisionInfo){
     this.collisions.set(info.other, info.type);
@@ -274,4 +275,6 @@ export class ColliderComponent extends ECS.Component implements Emitter {
   public destroy():void{
     this.entity.manager.removeCollidable(this);
   }
+
+
 }

@@ -1,6 +1,7 @@
 import { Actor } from "./engine/Actor";
 import { Player } from "./Player";
 import {IMAGE_LOADER} from "./engine/ImageLoader";
+import { ctx } from "./engine/graphics/ContextUtilities";
 
 export class Enemy extends Actor {
   public followTo: Player | undefined;
@@ -10,7 +11,7 @@ export class Enemy extends Actor {
   }
 
   init(): void {
-   this._sprite.setTexture(IMAGE_LOADER.getImage("player")); 
+   //this._sprite.setTexture(IMAGE_LOADER.getImage("player")); 
 }
 
   update(): void {
@@ -24,4 +25,15 @@ export class Enemy extends Actor {
     }
     super.update();
   }
+
+  draw(): void {
+    super.draw()
+    let x = this._transform._position.x;
+    let y = this._transform._position.y;
+    ctx.fillStyle = "red";
+    ctx.beginPath();
+    ctx.arc(this._transform._position.x, this._transform._position.y, 10, 0, 2*Math.PI);
+    ctx.fill();
+    ctx.fillStyle = "white"
+}
 }

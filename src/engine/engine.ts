@@ -3,6 +3,7 @@ import * as ECS from "./ECS/ECS";
 import { Player } from "../Player";
 import { Enemy } from "../Enemy";
 import { MANAGER } from "../engine/ECS/ECS";
+import {KEYBOARD} from "../main";
 //import { CollisionManager } from "../engine/CollisionDetector";
 //import {COLLISION_MANAGER} from "./utils";
 
@@ -46,7 +47,7 @@ export class Engine {
     if (this._startTime === undefined) {
       this._startTime = timeStamp;
     }
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
     this._manager.update();
     //this._collision_manager.update();
@@ -60,9 +61,13 @@ export class Engine {
       this._frame = 0;
     }
     //console.log("j'ai modifié");
-    ctx.fillStyle = "white";
+    ctx.fillStyle = "black";
     ctx.font = "20px Arial";
     ctx.fillText("FPS : " + this._fps, 150, 40);
+    let arrayKey : [string, boolean][] = Object.entries(KEYBOARD._keys);
+    let keys = arrayKey.filter(([key, value])=> value === true)
+    ctx.fillText("Touches : " + keys.toString(), 250, 40);
+    
     this._startTime = timeStamp;
     requestAnimationFrame((time) => this.loop(time));
   }

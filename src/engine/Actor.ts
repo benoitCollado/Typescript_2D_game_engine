@@ -3,6 +3,7 @@ import { TransformComponent } from "./ECS/TransformComponent";
 import { ColliderComponent } from "./ECS/ColliderComponent";
 import { SpriteComponent } from "./ECS/SpriteComponent";
 import { MANAGER } from "./ECS/ECS";
+import {ctx} from "./graphics/ContextUtilities";
 
 export class Actor extends ECS.Entity {
   public _transform: TransformComponent;
@@ -36,6 +37,7 @@ export class Actor extends ECS.Entity {
     if(this.name === "player"){
         document.addEventListener("click", (event) => {
           this._transform.move_to([Math.round(event.clientX), Math.round(event.clientY)]);
+          console.log("click de actor");
         });
     }
 
@@ -47,11 +49,5 @@ export class Actor extends ECS.Entity {
 
   update() {
     super.update();
-  }
-
-  draw() {
-    super.draw();
-  }
-
- 
+  } 
 }

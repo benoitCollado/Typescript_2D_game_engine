@@ -51,9 +51,6 @@ export class Entity implements Observer{
   ): T {
     const component = new type(this, ...args);
     if (this.componentsName.includes(component._className)) {
-      console.log(
-        this.name + " already has a component of type " + component._className,
-      );
       this.components.forEach((comp) => {
         if (comp._className === component._className) {
           return comp as T;
@@ -71,13 +68,10 @@ export class Entity implements Observer{
   public hasComponent<T extends Component>(type: Iconstructor<T>): boolean {
     let present = false;
     this.components.forEach((component) => {
-      console.log(component instanceof type);
       if (component instanceof type) {
-        console.log("ici");
         present = true;
       }
     });
-    console.log("bahaha");
     return present;
   }
 
@@ -86,9 +80,7 @@ export class Entity implements Observer{
   ): T | undefined {
     let returnComponent: T | undefined;
     this.components.forEach((component) => {
-      console.log(component instanceof type);
       if (component instanceof type) {
-        console.log(component);
         returnComponent = component as T;
       }
     });
@@ -105,7 +97,6 @@ export class Entity implements Observer{
     this.components = [];
     this.componentsName = [];
     this.manager.removeEntity(this);
-    console.log(this.manager.entities)
   }
 
   public isActive(): boolean{
@@ -142,13 +133,8 @@ export class Manager {
   }
 
   public addEntity(entity: Entity): void {
-    console.log("addEntity : ");
-    console.log(entity);
-
-    console.log(this.entities);
     if (this.entities[entity.name]) {
       if (this.entities[entity.name].includes(entity)) {
-        console.log("Entity with this name alreade exist");
       } else {
         this.entities[entity.name].push(entity);
       }
@@ -157,10 +143,6 @@ export class Manager {
     }
   }
   public removeEntity(entity: Entity): void{
-    console.log("removeEntity : ");
-    console.log(entity);
-
-    console.log(this.entities);
     this.entities[entity.name].forEach(entitie =>{
       if(entitie === entity){
         this.entities[entity.name].splice(this.entities[entity.name].indexOf(entitie), 1);
@@ -169,19 +151,14 @@ export class Manager {
   }
 
   public addCollidable(collider: ColliderComponent): void {
-    console.log("Add Collidable");
-    console.log(collider);
     if (this.collidables[collider._colliderTag]) {
       if (this.collidables[collider._colliderTag].includes(collider)) {
-        console.log("Collidable alreadey exist");
       } else {
         this.collidables[collider.entity.name].push(collider);
       }
     } else {
       this.collidables[collider.entity.name] = [collider];
     }
-    console.log("collidables");
-    console.log(this.collidables);
   }
 
   public removeCollidable(collider: ColliderComponent): void{   this.collidables[collider.entity.name].splice(this.collidables[collider.entity.name].indexOf(collider), 1);

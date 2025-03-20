@@ -3,9 +3,11 @@ import { Vector2D } from "../vector2D";
 
 export class TransformComponent extends ECS.Component {
   public _position: Vector2D = new Vector2D();
-  private _velocity: Vector2D = new Vector2D();
-  private _movment: Vector2D = new Vector2D();
-  private _moveToCoroutine: Generator | null = null;
+  public _velocity: Vector2D = new Vector2D();
+  public _acceleration: Vector2D = new Vector2D();
+  public _mass: number;
+  public _movment: Vector2D = new Vector2D();
+  public _moveToCoroutine: Generator | null = null;
   
 
   public _className: string = "TransformComponent";
@@ -27,6 +29,7 @@ export class TransformComponent extends ECS.Component {
     width: number,
     height: number,
     scale: number,
+    mass:number,
   ) {
     super(entity);
     this._position.x = position[0];
@@ -36,6 +39,7 @@ export class TransformComponent extends ECS.Component {
     this._height = height;
     this._scale = scale;
     this.order = 100;
+    this._mass = mass;
     this.origin_point = "CENTER";
     if(this.origin_point === "CENTER"){
       this.offsetx = this._width /2;
@@ -151,7 +155,7 @@ export class TransformComponent extends ECS.Component {
 
   public init() {}
 
-  public update() {
+  public update(delaTime:number) {
     
     if (this._moveToCoroutine !== null) {
       const done = this._moveToCoroutine.next();
@@ -182,6 +186,7 @@ export class TransformComponent extends ECS.Component {
   }
 
   private *_moveTo(position: [number, number]): Generator<boolean> {
+    //console.log("dans move_to  " + this.entity.name );
     this.Xvelocity = position[0] - this.x;
     this.Yvelocity = position[1] - this.y;
     while (

@@ -14,6 +14,7 @@ export class Engine {
   private _sum: number;
   private _frame: number;
   private _fps: number;
+  private _deltaTime:number;
   //private _collision_manager: CollisionManager;
 
   constructor(canvasID: string) {
@@ -25,6 +26,7 @@ export class Engine {
     this._fps = 0;
     this._sum = 0;
     this._frame = 0;
+    this._deltaTime=0;
   }
   public resize() {
     if (this._canvas !== undefined) {
@@ -34,9 +36,9 @@ export class Engine {
   }
 
   start(): void {
-    let player = new Player();
-    let second = new Enemy([300,300]);
-    let third = new Enemy([500,500]);
+    let player = new Player([0,0],20,20);
+    let second = new Enemy([300,300],20,20);
+    let third = new Enemy([500,500],20,20);
     //second.followTo = player;
     console.log(this._manager.entities);
 
@@ -47,10 +49,11 @@ export class Engine {
     if (this._startTime === undefined) {
       this._startTime = timeStamp;
     }
-    ctx.fillStyle = "white";
+    ctx.fillStyle ="black";
     ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
-    this._manager.update();
-    //this._collision_manager.update();
+    this._deltaTime = timeStamp - this._startTime;
+    this._manager.update(this._deltaTime/100);
+    this._manager.update_collision();
     this._manager.draw();
     const deltaTime = timeStamp - this._startTime;
     this._sum += deltaTime;
@@ -60,8 +63,10 @@ export class Engine {
       this._sum = 0;
       this._frame = 0;
     }
+
+    
     //console.log("j'ai modifié");
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.font = "20px Arial";
     ctx.fillText("FPS : " + this._fps, 150, 40);
     let arrayKey : [string, boolean][] = Object.entries(KEYBOARD._keys);

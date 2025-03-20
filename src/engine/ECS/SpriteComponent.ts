@@ -2,11 +2,13 @@ import { TransformComponent as TC, TransformComponent } from "./TransformCompone
 import * as ECS from "./ECS";
 import { Rect } from "../utils";
 import { ctx } from "../graphics/ContextUtilities";
+import {BodyComponent} from "./BodyComponent";
 
 export class SpriteComponent extends ECS.Component {
   public _className: string = "SpriteComponent";
   private _texture: HTMLImageElement;
-  private _transform: TC;
+ //private _transform: TC;
+  private _body : BodyComponent | undefined;
 
   private _source_rect: Rect = { x: 0, y: 0, w: 32, h: 32 };
   private _dest_rect: Rect = { x: 0, y: 0, w: 32, h: 32 };
@@ -18,7 +20,8 @@ export class SpriteComponent extends ECS.Component {
   ) {
     super(entity);
     this._texture = texture;
-    this._transform = this.entity.getComponent(TransformComponent) as TC;
+    //this._transform = this.entity.getComponent(TransformComponent) as TC;
+    
     if (height !== undefined) {
       this._source_rect.h = height;
     }
@@ -32,13 +35,17 @@ export class SpriteComponent extends ECS.Component {
     this._texture = texture;
     
   }
-  public init() {}
+  public init() {
+    this._body = this.entity.getComponent(BodyComponent) as BodyComponent;
+  }
 
-  public update() {
-    this._dest_rect.x = this._transform.x;
-    this._dest_rect.y = this._transform.y;
-    this._dest_rect.h = this._source_rect.h * this._transform.scale;
-    this._dest_rect.w = this._source_rect.w * this._transform.scale;
+  public update(deltaTime:number) {
+    if(this._body){
+      this._dest_rect.x = this._body?.position.x;
+      this._dest_rect.y = this._body?.position.y;
+      this._dest_rect.h = this._source_rect.h * this._body.dimension.x;
+      this._dest_rect.w = this._source_rect.w * this._body.dimension.y;
+    }
   }
 
   public draw() {

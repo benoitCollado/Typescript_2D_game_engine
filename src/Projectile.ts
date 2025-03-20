@@ -1,14 +1,30 @@
-import {Actor} from "./engine/Actor";
+/*import {Actor} from "./engine/Actor";
 import {IMAGE_LOADER} from "./engine/ImageLoader";
 import { Emitter, EventArgs, CollisionEventArgs} from "./engine/utils";
 import { ColliderComponent} from "./engine/ECS/ColliderComponent";
 import {ctx} from "./engine/graphics/ContextUtilities";
+import {invisible_part} from "./main";
+
+import {Shape} from "./engine/Shape"
+import {Vector2D} from "./engine/vector2D"
+const points : Vector2D[] =[
+  new Vector2D(0,0),
+  new Vector2D(8,-4),
+  new Vector2D(16,0),
+  new Vector2D(16,16),
+  new Vector2D(8,20),
+  new Vector2D(0,16)
+];
+const origin = new Vector2D(8,8);
+const xShape : Shape = new Shape(points, origin);
 
 export class Projectile extends Actor{
   direction : [number, number] = [0,0];
   speed : number = 3;
-  constructor(name:string, position:[number, number] =[0,0], direction:[number,number], speed:number){
-    super(name,position);
+  log_pos: string = "";
+  
+  constructor(name:string, position:[number, number] =[0,0], direction:[number,number], speed:number, width:number, height:number, shape: Shape = xShape){
+    super(name,position, width, height, shape, speed);
     //console.log("constructeur projectile : ", direction);
     this.direction = direction;
     this.speed = speed;
@@ -34,14 +50,16 @@ export class Projectile extends Actor{
      
    } 
 }
-  update(): void {
+  update(deltaTime:number): void {
     
-   super.update();
+   super.update(deltaTime);
 
     if(this._transform.x > window.innerWidth || this._transform.y > window.innerHeight || this._transform.x < 0 || this._transform.y < 0){
       //console.log("hors de l'écran");
-      this.destroy()
+      //invisible_part.textContent += this.log_pos;
+      this.destroy();
     }
+    this.log_pos += `${this.id} ; x: ${this._transform.x} ; y: ${this._transform.y} \n`;
 }
 
   draw () {
@@ -52,6 +70,5 @@ export class Projectile extends Actor{
     ctx.beginPath();
     ctx.arc(this._transform._position.x, this._transform._position.y, 5, 0, 2*Math.PI);
     ctx.fill();
-    ctx.fillStyle = "white"
   }
-}
+}*/

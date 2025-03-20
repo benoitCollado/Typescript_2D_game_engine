@@ -1,4 +1,4 @@
-import { ColliderComponent } from "./ECS/ColliderComponent";
+/*import { ColliderComponent } from "./ECS/ColliderComponent";
 export class Collision {
   public static AABB(
     colliderA: ColliderComponent,
@@ -26,3 +26,4 @@ export class Collision {
     return [true, solid];
   }
 }
+*/

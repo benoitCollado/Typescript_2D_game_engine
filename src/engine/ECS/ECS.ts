@@ -1,5 +1,7 @@
 import { Iconstructor, Observer, Emitter, EventArgs } from "../utils";
-import { ColliderComponent } from "./ColliderComponent";
+import { BodyComponent } from "./BodyComponent";
+import SAT from "../SAT";
+//import { ColliderComponent } from "./ColliderComponent";
 
 export abstract class Component {
   public abstract _className: string;
@@ -12,7 +14,7 @@ export abstract class Component {
   }
 
   abstract init(): void;
-  abstract update(): void;
+  abstract update(deltaTime: number): void;
   abstract draw(): void;
   public destroy(): void{
     
@@ -24,6 +26,7 @@ export class Entity implements Observer{
   protected components: Component[] = [];
   protected componentsName: string[] = [];
   public name: string;
+  public id : string;
 
   public manager: Manager;
 
@@ -31,13 +34,14 @@ export class Entity implements Observer{
     this.active = true;
     this.manager = manager;
     this.name = name;
+    this.id = Date.now().toString();
   }
 
   public init() {}
 
-  public update(): void {
+  public update(deltaTime:number): void {
     const componentsValues = Object.values(this.components);
-    componentsValues.forEach((component) => component.update());
+    componentsValues.forEach((component) => component.update(deltaTime));
   }
 
   public draw(): void {
@@ -60,6 +64,7 @@ export class Entity implements Observer{
       ("component added");
       this.components.push(component);
       this.componentsName.push(component._className);
+      component.init();
     }
     this.components.sort((a, b) => b.order - a.order);
     return component;
@@ -108,19 +113,18 @@ export class Manager {
   public entities: { [name: string]: Entity[] } = {
     default: [new Entity(MANAGER, "default")],
   };
-  public collidables: { [name: string]: ColliderComponent[] } = {};
-  public update(): void {
+  public collidables: BodyComponent[] = [];
+  
+  public update(deltaTime:number): void {
     const entitiesValues = Object.values(this.entities);
     entitiesValues.forEach((entity) => {
       entity.forEach((entiti) => {
         if (entiti.isActive()) {
-          entiti.update();
+          entiti.update(deltaTime);
         }
            });;
     });;
   }
-
- 
   
   public draw(): void {
     const entitiesValues = Object.values(this.entities);
@@ -130,6 +134,30 @@ export class Manager {
           entiti.draw()
         }});
     });
+  }
+
+  public update_collision(): void{
+    for(let collider of this.collidables){
+      for(let other of this.collidables){
+        if(collider === other){
+          }else{
+            let mtv = SAT(collider, other);
+            if(mtv !== null){
+              if(collider.velocity.length){
+                if(other.velocity.length){
+                  collider.position = collider.position.add(mtv.multiply(0.5))
+                  other.position = other.position.substract(mtv.multiply(0.5));
+                }else{
+                  collider.position = collider.position.substract(mtv)
+                }
+                
+              }else{
+                other.position = other.position.add(mtv);
+              }
+            }
+          }
+      }
+    }
   }
 
   public addEntity(entity: Entity): void {
@@ -150,18 +178,15 @@ export class Manager {
     });
   }
 
-  public addCollidable(collider: ColliderComponent): void {
-    if (this.collidables[collider._colliderTag]) {
-      if (this.collidables[collider._colliderTag].includes(collider)) {
+  public addCollidable(collider: BodyComponent): void {
+      if(this.collidables.includes(collider)) {
+        
       } else {
-        this.collidables[collider.entity.name].push(collider);
+        this.collidables.push(collider);
       }
-    } else {
-      this.collidables[collider.entity.name] = [collider];
-    }
   }
-
-  public removeCollidable(collider: ColliderComponent): void{   this.collidables[collider.entity.name].splice(this.collidables[collider.entity.name].indexOf(collider), 1);
+   
+  public removeCollidable(collider: BodyComponent): void{   this.collidables.splice(this.collidables.indexOf(collider), 1);
   }
 }
 

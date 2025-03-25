@@ -1,29 +1,36 @@
 import {Actor} from "./engine/Actor"
 import { KEYBOARD } from "./main";
-//import {Projectile} from "./Projectile";
+import {Projectile} from "./Projectile";
 import {IMAGE_LOADER} from "./engine/ImageLoader";
 import { ctx } from "./engine/graphics/ContextUtilities";
+import {Prototype} from "./Prototype";
 
 import {Shape} from "./engine/Shape"
 import {Vector2D} from "./engine/vector2D"
 const points : Vector2D[] =[
+  /*new Vector2D(0,0),
+  new Vector2D(3.22, -7.8),
+  new Vector2D(11,-11),
+  new Vector2D(18.8,-7.8),
+  new Vector2D(22,0),
+  new Vector2D(18.8, 7.8),
+  new Vector2D(11, 11),
+  new Vector2D(3.22, 7.8)*/
   new Vector2D(0,0),
-  new Vector2D(15,-8),
-  new Vector2D(30,0),
-  new Vector2D(30,30),
-  new Vector2D(15, 38),
-  new Vector2D(0,30)
+  new Vector2D(20,0),
+  new Vector2D(20,20),
+  new Vector2D(0,20)
 ];
-const origin = new Vector2D(15,15);
+const origin = new Vector2D(10,10);
 const xShape : Shape = new Shape(points, origin);
 
 
-const COOLDOWN = 5;
+const COOLDOWN = 10;
 
 
-export class Player extends Actor{
+export class Player extends Actor implements Prototype<Player>{
 
-  direction : [number, number] = [1,0];
+  direction : Vector2D = new Vector2D(1,0);
   vectorDirection : Vector2D = new Vector2D(1,0);
   cooldown : number = 0;
   constructor(position:[number, number]=[0,0], width:number, height:number, shape : Shape = xShape, speed : number = 15){
@@ -47,6 +54,7 @@ export class Player extends Actor{
     //console.log(this._transform.position);
     super.update(delaTime);
     this.inputManager(delaTime);
+    //console.log(this._bodyComponent.position);
   }
 
   inputManager(deltatime:number) {
@@ -75,7 +83,7 @@ export class Player extends Actor{
     }
 
     if(x_goal !== 0 || y_goal !== 0){
-      this.direction = [x_goal,y_goal];
+      this.direction = new Vector2D(x_goal,y_goal);
       this.vectorDirection = new Vector2D(
         x_goal,
         y_goal
@@ -90,7 +98,7 @@ export class Player extends Actor{
    
     if(this.cooldown  === 0){
       if(KEYBOARD._keys[" "]){
-        //const projectile = new Projectile("projectile", [this._transform.x, this._transform.y], this.direction, 10, 5,5);
+        const projectile = new Projectile("projectile", [this._bodyComponent.position.x, this._bodyComponent.position.y], this.direction, 50, 5,5);
         this.cooldown = COOLDOWN;
       }
     }else{
@@ -107,5 +115,9 @@ export class Player extends Actor{
     ctx.beginPath();
     ctx.arc(this._bodyComponent.position.x, this._bodyComponent.position.y, 10, 0, 2*Math.PI);
     ctx.fill();
+}
+
+  clone(): Player {
+   return Object.create(this); 
 }
 }

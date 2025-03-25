@@ -25,7 +25,7 @@ export default function resolveSAT(polygonA : BodyComponent, polygonB : BodyComp
     }
   }
   if(smallestAxis){
-    console.log(polygonA.entity.name, " ", polygonB.entity.name);
+    //console.log(polygonA.entity.name, " ", polygonB.entity.name);
     return smallestAxis.multiply(minOverlap);
   }
   return null;

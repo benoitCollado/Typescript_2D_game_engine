@@ -4,6 +4,7 @@ import { Player } from "../Player";
 import { Enemy } from "../Enemy";
 import { MANAGER } from "../engine/ECS/ECS";
 import {KEYBOARD} from "../main";
+import { Vector2D } from "./vector2D";
 //import { CollisionManager } from "../engine/CollisionDetector";
 //import {COLLISION_MANAGER} from "./utils";
 
@@ -35,36 +36,37 @@ export class Engine {
     }
   }
 
-  start(): void {
+  async start(): Promise<void> {
     let player = new Player([0,0],20,20);
     let second = new Enemy([300,300],20,20);
     let third = new Enemy([500,500],20,20);
+    //let playerClone = player.clone();
+    //playerClone._bodyComponent.position = new Vector2D(500,500);
     //second.followTo = player;
     console.log(this._manager.entities);
-
-    this.loop(this._startTime);
     this.resize();
+    this.loop(this._startTime);
+    
   }
+  
   loop(timeStamp: number): void {
     if (this._startTime === undefined) {
       this._startTime = timeStamp;
     }
-    ctx.fillStyle ="black";
+    ctx.fillStyle = "rgba(0,0,0,0.1)";
     ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
     this._deltaTime = timeStamp - this._startTime;
-    this._manager.update(this._deltaTime/100);
-    this._manager.update_collision();
-    this._manager.draw();
-    const deltaTime = timeStamp - this._startTime;
-    this._sum += deltaTime;
+    this._manager.runGame(this._deltaTime/100);
+    //const deltaTime = timeStamp - this._startTime;
+    this._sum += this._deltaTime;
     this._frame += 1;
-    if (this._sum/1000 > 1) {
+    if (this._sum/1000 >= 1) {
+      console.log(this._sum);
       this._fps = Math.round(1/((this._sum / this._frame)/1000));
       this._sum = 0;
       this._frame = 0;
     }
 
-    
     //console.log("j'ai modifié");
     ctx.fillStyle = "white";
     ctx.font = "20px Arial";
@@ -76,4 +78,34 @@ export class Engine {
     this._startTime = timeStamp;
     requestAnimationFrame((time) => this.loop(time));
   }
+
+  /*async loop() : Promise<void> {
+    let timeStamp: number;
+    this._startTime = Date.now();
+    console.log("commencement de la loop");
+    
+    while(true){
+      console.log("début de la loop");
+      timeStamp = Date.now()
+      ctx.fillStyle ="black";
+      ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
+      this._deltaTime = timeStamp - this._startTime;
+      this._manager.runGame(this._deltaTime/100);
+      this._sum += this._deltaTime;
+      this._frame += 1;
+      if (this._sum/1000 >=1) {
+        this._fps = Math.round(1/((this._sum / this._frame)/1000));
+        this._sum = 0;
+        this._frame = 0;
+      }
+      ctx.fillStyle = "white";
+      ctx.font = "20px Arial";
+      ctx.fillText("FPS : " + this._fps, 150, 40);
+      let arrayKey : [string, boolean][] = Object.entries(KEYBOARD._keys);
+      let keys = arrayKey.filter(([key, value])=> value === true)
+      ctx.fillText("Touches : " + keys.toString(), 250, 40);
+
+      this._startTime = timeStamp;
+    }
+  }*/
 }

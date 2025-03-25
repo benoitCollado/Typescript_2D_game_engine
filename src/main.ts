@@ -32,9 +32,9 @@ window.onload = () => {
   invisible_part.style.visibility = "hidden";
   document.body.appendChild(invisible_part);
 };
-window.addEventListener("AllImageLoaded", () =>{
+window.addEventListener("AllImageLoaded", async () =>{
   console.log("AllImageLoaded");
-  Game.start();
+  await Game.start();
 })
 
 window.onresize = () => {

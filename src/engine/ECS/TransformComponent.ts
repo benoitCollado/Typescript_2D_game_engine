@@ -48,113 +48,14 @@ export class TransformComponent extends ECS.Component {
     
   }
 
-  public get x(): number {
-    return this._position.x;
-  }
-
-  public get y(): number {
-    return this._position.y;
-  }
-
-  public set x(x: number) {
-    this._position.x = x;
-  }
-
-  public set y(y: number) {
-    this._position.y = y;
-  }
-
-  public get position(): [number, number] {
-    return [this._position.x, this._position.y];
-  }
-
-  public set position(position: [number, number]) {
-    this._position.x = position[0];
-    this._position.y = position[1];
-  }
-
-  public get Xvelocity(): number {
-    return this._velocity.x;
-  }
-  public get Yvelocity(): number {
-    return this._velocity.y;
-  }
-  public get velocity(): [number, number] {
-    return [this._velocity.x, this._velocity.y];
-  }
-
-  public set velocity(velocity: [number, number]) {
-    this._velocity.x = velocity[0];
-    this._velocity.y = velocity[1];
-  }
-
-  public set Xvelocity(velocity: number) {
-    this._velocity.x = velocity;
-  }
-
-  public set Yvelocity(velocity: number) {
-    this._velocity.y = velocity;
-  }
-
-  public get Xmovment(): number {
-    return this._movment.x;
-  }
-
-  public get Ymovment(): number {
-    return this._movment.y;
-  }
-
-  public set Xmovment(movment: number) {
-    this._movment.x = movment;
-  }
-
-  public set Ymovment(movment: number) {
-    this._movment.y = movment;
-  }
-
-  public get movment(): [number, number] {
-    return [this._movment.x, this._movment.y];
-  }
-
-  public set movment(movment: [number, number]) {
-    this._movment.x = movment[0];
-    this._movment.y = movment[1];
-  }
-
-  public get speed(): number {
-    return this._speed;
-  }
-
-  public set speed(speed: number) {
-    this._speed = speed;
-  }
-
-  public get width(): number {
-    return this._width;
-  }
-
-  public get height(): number {
-    return this._height;
-  }
-
-  public set height(heigth: number) {
-    this._height = heigth;
-  }
-
-  public get scale(): number {
-    return this._scale;
-  }
-
-  public set scale(scale: number) {
-    this._scale = scale;
-  }
-
-  public get isMoving(): boolean {
-    return this._movment.length > 0;
-  }
+  
 
   public init() {}
 
+  beforeUpdate(): void {
+    
+}
+  
   public update(delaTime:number) {
     
     if (this._moveToCoroutine !== null) {
@@ -177,6 +78,10 @@ export class TransformComponent extends ECS.Component {
   public draw() {
   }
 
+  beforeNextFrame(): void {
+    
+}
+/*
   public move_to(position: [number, number]): void {
     this._moveToCoroutine = this._moveTo(position);
   }
@@ -212,8 +117,8 @@ export class TransformComponent extends ECS.Component {
         while (Math.abs(this.y - position[1]) > 0.1) {
           this.y - position[1] > 0 ? (this.y -= 0.05) : (this.y += 0.05);
           if (Math.abs(this.y - position[1]) < 0.1) {
-            this.y = position[1];
-            this.Yvelocity = 0;
+            this._position.y = position[1];
+            this._velocity.y = 0;
           }
         }
       } else {
@@ -236,5 +141,5 @@ export class TransformComponent extends ECS.Component {
     yield false;
     }
     
-  }
+  }*/
 }

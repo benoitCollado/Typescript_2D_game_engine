@@ -1,5 +1,7 @@
 //import { ColliderComponent } from "./ECS/ColliderComponent";
 
+import { BodyComponent } from "./ECS/BodyComponent";
+
 export interface Iconstructor<T> {
   new (...args: any[]): T;
 }
@@ -21,13 +23,13 @@ export interface Emitter {
 export interface EventArgs {
   eventName: string;
 }
-/*export interface CollisionEventArgs extends EventArgs {
+export interface CollisionEventArgs extends EventArgs {
   solid: boolean;
-  other: ColliderComponent;
-}*/
+  other: BodyComponent;
+}
 
 export interface Observer {
-  notified<T extends Emitter, U extends EventArgs>(emitter : T, Args : U): void;
+  notified<T extends Emitter, U extends EventArgs>(emitter : T, eventArgs: U): void;
 }
 
 /*export interface CollisionInfo{

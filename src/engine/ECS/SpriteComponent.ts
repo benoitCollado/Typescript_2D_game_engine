@@ -39,6 +39,10 @@ export class SpriteComponent extends ECS.Component {
     this._body = this.entity.getComponent(BodyComponent) as BodyComponent;
   }
 
+  beforeUpdate(): void {
+    
+}
+
   public update(deltaTime:number) {
     if(this._body){
       this._dest_rect.x = this._body?.position.x;
@@ -63,4 +67,8 @@ export class SpriteComponent extends ECS.Component {
       //console.log(error);
     }
   }
+
+  beforeNextFrame(): void {
+    
+}
 }

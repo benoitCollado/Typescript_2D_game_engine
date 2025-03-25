@@ -14,8 +14,10 @@ export abstract class Component {
   }
 
   abstract init(): void;
+  abstract beforeUpdate():void;
   abstract update(deltaTime: number): void;
   abstract draw(): void;
+  abstract beforeNextFrame():void;
   public destroy(): void{
     
   };
@@ -37,7 +39,15 @@ export class Entity implements Observer{
     this.id = Date.now().toString();
   }
 
-  public init() {}
+  public init() {
+    const componentsValues = Object.values(this.components);
+    componentsValues.forEach((component) => component.init());
+  }
+
+  public beaforUpdate(){
+    const componentsValues = Object.values(this.components);
+    componentsValues.forEach((component) => component.beforeUpdate());
+  }
 
   public update(deltaTime:number): void {
     const componentsValues = Object.values(this.components);
@@ -47,6 +57,11 @@ export class Entity implements Observer{
   public draw(): void {
     const componentsValues = Object.values(this.components);
     componentsValues.forEach((component) => component.draw());
+  }
+
+  public beforeNextFrame(): void{
+    const componentsValues = Object.values(this.components);
+    componentsValues.forEach((component) => component.beforeNextFrame());
   }
 
   public addComponent<T extends Component>(
@@ -114,6 +129,40 @@ export class Manager {
     default: [new Entity(MANAGER, "default")],
   };
   public collidables: BodyComponent[] = [];
+
+  constructor(){
+    this.init();
+  }
+  
+  public runGame(deltatime:number):void{
+    this.beforeUpdate();
+    this.update(deltatime);
+    this.update_collision();
+    this.draw();
+    this.beforeNextFrame();
+  }
+
+  public init(): void{
+    const entitiesValues = Object.values(this.entities);
+    entitiesValues.forEach((entity) => {
+      entity.forEach((entiti) => {
+        if (entiti.isActive()) {
+          entiti.init();
+        }
+           });;
+    });;
+  }
+
+  public beforeUpdate():void{
+     const entitiesValues = Object.values(this.entities);
+      entitiesValues.forEach((entity) => {
+        entity.forEach((entiti) => {
+          if (entiti.isActive()) {
+            entiti.beaforUpdate();
+          }
+             });;
+      });;
+  }
   
   public update(deltaTime:number): void {
     const entitiesValues = Object.values(this.entities);
@@ -140,24 +189,49 @@ export class Manager {
     for(let collider of this.collidables){
       for(let other of this.collidables){
         if(collider === other){
-          }else{
+        }else{
+           // console.log(collider.entity.name  + "  " + other.entity.name)
+           // console.log("    ");
             let mtv = SAT(collider, other);
-            if(mtv !== null){
-              if(collider.velocity.length){
-                if(other.velocity.length){
-                  collider.position = collider.position.add(mtv.multiply(0.5))
-                  other.position = other.position.substract(mtv.multiply(0.5));
-                }else{
-                  collider.position = collider.position.substract(mtv)
-                }
-                
-              }else{
-                other.position = other.position.add(mtv);
+            //if(mtv !== null) console.log(collider._className + " " + other._className);
+            if(mtv !== null && collider.solid && other.solid){
+
+              
+              console.log(collider.entity.name + "  " + other.entity.name)
+              const moveC = collider.velocity;
+              const moveO = other.velocity;
+
+              const magnC = moveC.length;
+              const magnO = moveO.length;
+
+              if(magnC > 0){
+                const dotC = mtv.dot(moveC);
+                const sens = dotC  > 0 ? -1 : 1;
+                collider.position = collider.position.add(mtv.multiply(sens));
               }
+
+              if(magnO > 0){
+                const dotO = mtv.dot(moveO);
+                const sens = dotO > 0 ? -1 : 1;
+                other.position = other.position.add(mtv.multiply(sens));
+              }
+
+              collider.notify(collider)
             }
           }
       }
     }
+  }
+
+  public beforeNextFrame():void {
+     const entitiesValues = Object.values(this.entities);
+      entitiesValues.forEach((entity) => {
+        entity.forEach((entiti) => {
+          if (entiti.isActive()) {
+            entiti.beforeNextFrame();
+          }
+             });;
+      });;
   }
 
   public addEntity(entity: Entity): void {
@@ -167,6 +241,7 @@ export class Manager {
         this.entities[entity.name].push(entity);
       }
     } else {
+      entity.init();
       this.entities[entity.name] = [entity];
     }
   }

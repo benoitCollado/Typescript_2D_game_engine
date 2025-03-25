@@ -49,6 +49,10 @@ export class Actor extends ECS.Entity {
 
   }
 
+  onCollision(other:Actor){
+    
+  }  
+
   init() {
     super.init();
   }

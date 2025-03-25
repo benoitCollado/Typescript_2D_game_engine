@@ -5,14 +5,20 @@ import { ctx } from "./engine/graphics/ContextUtilities";
 import {Shape} from "./engine/Shape"
 import {Vector2D} from "./engine/vector2D"
 const points : Vector2D[] =[
+  /* new Vector2D(0,0),
+    new Vector2D(3.22, -7.8),
+    new Vector2D(11,-11),
+    new Vector2D(18.8,-7.8),
+    new Vector2D(22,0),
+    new Vector2D(18.8, 7.8),
+    new Vector2D(11, 11),
+    new Vector2D(3.22, 7.8)*/
   new Vector2D(0,0),
-  new Vector2D(8,-2),
-  new Vector2D(16,0),
-  new Vector2D(16,16),
-  new Vector2D(8,18),
-  new Vector2D(0,16)
+  new Vector2D(20,0),
+  new Vector2D(20,20),
+  new Vector2D(0,20)
 ];
-const origin = new Vector2D(8,8);
+const origin = new Vector2D(10,10);
 const xShape : Shape = new Shape(points, origin);
 
 export class Enemy extends Actor {

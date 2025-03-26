@@ -15,7 +15,7 @@ export default class Layer{
   }
 
   public deleteEntity(id: string):void{
-    const index = this.entities.indexOf(this.entities.find((entity)=>entity.id === id) as Entity);
+    //const index = this.entities.indexOf(this.entities.find((entity)=>entity.id === id) as Entity);
     
   }
 } 

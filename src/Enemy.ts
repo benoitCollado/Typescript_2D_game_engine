@@ -23,10 +23,12 @@ const xShape : Shape = new Shape(points, origin);
 
 export class Enemy extends Actor {
   public followTo: Player | undefined;
+  public life : number;
   
-  constructor(position:[number,number]=[0,0], width:number, height:number, shape: Shape = xShape, speed: number = 1) {
+  constructor(position:[number,number]=[0,0], width:number, height:number, shape: Shape = xShape, speed: number = 1, life = 10) {
     super("enemy", position, width, height, shape, speed);
     this.init();
+    this.life = life;
   }
 
   init(): void {
@@ -42,6 +44,9 @@ export class Enemy extends Actor {
         ]);
       }
     }*/
+    if(this.life <= 0){
+      this.destroy();
+    }
     super.update(deltaTime);
   }
 
@@ -53,5 +58,9 @@ export class Enemy extends Actor {
     ctx.beginPath();
     ctx.arc(this._bodyComponent.position.x, this._bodyComponent.position.y, 10, 0, 2*Math.PI);
     ctx.fill();
-}
+  }
+
+  takeDamage(damage:number){
+    this.life -= damage;
+  }
 }

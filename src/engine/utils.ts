@@ -24,7 +24,7 @@ export interface EventArgs {
   eventName: string;
 }
 export interface CollisionEventArgs extends EventArgs {
-  solid: boolean;
+  type: string;
   other: BodyComponent;
 }
 

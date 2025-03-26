@@ -1,4 +1,4 @@
-import { Iconstructor, Observer, Emitter, EventArgs } from "../utils";
+import { Iconstructor, Observer, Emitter, EventArgs, CollisionEventArgs } from "../utils";
 import { BodyComponent } from "./BodyComponent";
 import SAT from "../SAT";
 //import { ColliderComponent } from "./ColliderComponent";
@@ -28,7 +28,6 @@ export class Entity implements Observer{
   protected components: Component[] = [];
   protected componentsName: string[] = [];
   public name: string;
-  public id : string;
 
   public manager: Manager;
 
@@ -36,7 +35,6 @@ export class Entity implements Observer{
     this.active = true;
     this.manager = manager;
     this.name = name;
-    this.id = Date.now().toString();
   }
 
   public init() {
@@ -151,6 +149,7 @@ export class Manager {
         }
            });;
     });;
+    console.log(this.collidables);
   }
 
   public beforeUpdate():void{
@@ -194,29 +193,38 @@ export class Manager {
            // console.log("    ");
             let mtv = SAT(collider, other);
             //if(mtv !== null) console.log(collider._className + " " + other._className);
-            if(mtv !== null && collider.solid && other.solid){
-
-              
-              console.log(collider.entity.name + "  " + other.entity.name)
-              const moveC = collider.velocity;
-              const moveO = other.velocity;
-
-              const magnC = moveC.length;
-              const magnO = moveO.length;
-
-              if(magnC > 0){
-                const dotC = mtv.dot(moveC);
-                const sens = dotC  > 0 ? -1 : 1;
-                collider.position = collider.position.add(mtv.multiply(sens));
+            if(mtv !== null){
+              collider.notify<BodyComponent, CollisionEventArgs>(collider, {
+                eventName: "collision",
+                type:"trigger",
+                other:other
+              });
+              other.notify<BodyComponent, CollisionEventArgs>(other, {
+                eventName: "collision",
+                type:"trigger",
+                other:collider
+              })
+              if(collider.solid && other.solid){
+                console.log(collider.entity.name + "  " + other.entity.name)
+                const moveC = collider.velocity;
+                const moveO = other.velocity;
+  
+                const magnC = moveC.length;
+                const magnO = moveO.length;
+  
+                if(magnC > 0){
+                  const dotC = mtv.dot(moveC);
+                  const sens = dotC  > 0 ? -1 : 1;
+                  collider.position = collider.position.add(mtv.multiply(sens));
+                }
+  
+                if(magnO > 0){
+                  const dotO = mtv.dot(moveO);
+                  const sens = dotO > 0 ? -1 : 1;
+                  other.position = other.position.add(mtv.multiply(sens));
+                }
+                
               }
-
-              if(magnO > 0){
-                const dotO = mtv.dot(moveO);
-                const sens = dotO > 0 ? -1 : 1;
-                other.position = other.position.add(mtv.multiply(sens));
-              }
-
-              collider.notify(collider)
             }
           }
       }

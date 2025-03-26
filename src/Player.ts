@@ -25,7 +25,7 @@ const origin = new Vector2D(10,10);
 const xShape : Shape = new Shape(points, origin);
 
 
-const COOLDOWN = 10;
+const COOLDOWN = 15;
 
 
 export class Player extends Actor implements Prototype<Player>{

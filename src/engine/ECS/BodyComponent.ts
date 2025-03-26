@@ -50,13 +50,13 @@ export class BodyComponent extends ECS.Component implements Emitter{
   }
   
   draw(): void {
-    ctx.strokeStyle = "white";
+    /*ctx.strokeStyle = "white";
     ctx.beginPath();
     ctx.moveTo(this.shape.vertices[0].x + this.position.x - this.shape.origin.x, this.shape.vertices[0].y + this.position.y - this.shape.origin.y)
     for(let x = 1; x <= this.shape.vertices.length; x++){
       ctx.lineTo(this.shape.vertices[x % this.shape.vertices.length].x + this.position.x - this.shape.origin.x, this.shape.vertices[x % this.shape.vertices.length].y + this.position.y - this.shape.origin.y);
     }
-    ctx.stroke();
+    ctx.stroke();*/
   }
 
   beforeNextFrame(): void {
@@ -105,5 +105,11 @@ export class BodyComponent extends ECS.Component implements Emitter{
     for (const observer of this.observers) {
         observer.notified(emitter, args);
     }
+  }
+
+  public destroy(): void {
+    const index = this.entity.manager.collidables.indexOf(this);
+    this.entity.manager.collidables.splice(index,1);
+    console.log(this.entity.manager.collidables);
   }
 }

@@ -44,6 +44,8 @@ export class Engine {
     //playerClone._bodyComponent.position = new Vector2D(500,500);
     //second.followTo = player;
     console.log(this._manager.entities);
+    this._manager.init();
+    console.log("is same bodycomponent", player._bodyComponent === second._bodyComponent)
     this.resize();
     this.loop(this._startTime);
     
@@ -53,9 +55,10 @@ export class Engine {
     if (this._startTime === undefined) {
       this._startTime = timeStamp;
     }
-    ctx.fillStyle = "rgba(0,0,0,0.1)";
+    ctx.fillStyle = "rgba(0,0,0,0.6)";
     ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
     this._deltaTime = timeStamp - this._startTime;
+    
     this._manager.runGame(this._deltaTime/100);
     //const deltaTime = timeStamp - this._startTime;
     this._sum += this._deltaTime;
@@ -74,6 +77,7 @@ export class Engine {
     let arrayKey : [string, boolean][] = Object.entries(KEYBOARD._keys);
     let keys = arrayKey.filter(([key, value])=> value === true)
     ctx.fillText("Touches : " + keys.toString(), 250, 40);
+    ctx.fillText("nombre de collider : " + this._manager.collidables.length, 150, 100);
     
     this._startTime = timeStamp;
     requestAnimationFrame((time) => this.loop(time));

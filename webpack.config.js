@@ -5,11 +5,11 @@ module.exports = {
   mode: "production",
   devtool: "inline-source-map",
   entry: {
-    main: "./src/main.ts",
+    main: "./V2/main.ts",
   },
   output: {
     path: path.resolve(__dirname, './dist/js'),
-    filename: "express-bundle.js" // <--- Will be compiled to this single file
+    filename: "game.js" // <--- Will be compiled to this single file
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
@@ -18,7 +18,8 @@ module.exports = {
     rules: [
       { 
         test: /\.tsx?$/,
-        loader: "ts-loader"
+        loader: "ts-loader",
+        exclude: [path.resolve(__dirname,"./avec_webgl")]
       }
     ]
   }
